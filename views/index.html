@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>text to svg</title>
+
+    <link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
+</head>
+
+<body>
+    <div class="main-ctn">
+
+        <div>
+            <input type="text" id="text" placeholder="请输入文字" \>
+            <select id='select-font'>
+                <option value='Songti SC'>请选择字体</option>
+                <option value='Baoli SC'>隶书</option>
+                <option value='GB18030 Bitmap'>像素</option>
+                <option value='Hannotate SC'>微圆</option>
+                <option value='HanziPen SC'>汉字</option>
+                <option value='Kaiti SC'>楷书</option>
+                <option value='Xingkai SC'>行楷</option>
+                <option value='Balqis'>Balqis</option>
+            </select><br/>
+            <input type="color" id="select-color" name="">
+            <button id="add-shadow">阴影</button> <input type="button" id="select-fontsize" value="加粗"> <br/>
+            
+            <label>
+                背景<input type="file" id="add-pattern">
+            </label> <br/>
+
+            <label>
+                曲度<input type="range" id="select-curvature" min="0.01" max="1"  value="0.01" step="0.01"> 
+            </label> <br/>
+
+            <button id="create-text">生成文字</button>
+            
+            <button id="create-img">生成图片</button> <br/>
+            <input type="button" id="test" value="post req">  
+        </div>
+        <div class="editBox">
+            <canvas id="canvasCtn" height="300px" width="500px"></canvas>
+        </div>
+        <svg id="img-ctn" height="300px" width="500px"></svg>
+    </div> 
+    <script src="/javascripts/jquery-3.2.1.min.js"></script>
+    <script src="/javascripts/fabric.js"></script>
+    <script src="/javascripts/main.js"></script>  
+</body>
+<style>
+    body{
+        text-align:center;
+    }
+
+    .main-ctn{
+        margin:20px auto;
+        width: 500px;
+    }
+
+    .editBox{
+        height: 300px;
+        width : 500px;
+        border: 1px solid grey;
+        margin-top: 20px;
+    }
+</style>
+</html>

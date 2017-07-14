@@ -5,30 +5,21 @@
     var fixedWidth;
 
     getById('create-text').onclick = function(){
-        var text = getById("text").value.trim(),
-            numOfChar = text.length,
-            chars = new Array(numOfChar), 
-            charGroup, 
-            i,
-            offsetWidth = 0;
-
-        for(i=0; i<numOfChar; i++){
-            chars[i] = new fabric.Text(text[i], {
-                fontSize: 50,
-                left: offsetWidth,
-                fill: getById('select-color').value,
-                fontFamily: getById("select-font").value
-            });
-            offsetWidth += chars[i].width;
-        }
-        fixedWidth = offsetWidth;
-        charGroup = new fabric.Group(chars, {
-            top: 50,
-            left:50
+        $.post("/",
+        {
+        text: $("#text").val(),
+        fontFamily: $("#select-font").val()
+        },
+        function(data,status){
+            if (status == 'success'){
+                console.log(data);
+            }
+            canvas.loadFromJSON(data,canvas.renderAll.bind(canvas));
+            fixedWidth = canvas.item(0).width;
+            canvas.setActiveObject(canvas.item(0));
         });
 
-        canvas.add(charGroup);
-        canvas.setActiveObject(canvas.item(0));
+        $('#phase2').show();
     };
 
     getById('add-pattern').onchange = function() {
@@ -193,9 +184,10 @@
         },
         function(data,status){
             if (status == 'success'){
-                alert(data);
+                console.log(data);
             }
-            
+            canvas.loadFromJSON(data,canvas.renderAll.bind(canvas));
+            fixedWidth = canvas.getActiveObject().width;
         });
     });
 

@@ -17,8 +17,3 @@ body {
 }
 
 
-@font-face {
-  font-family: 'Balqis';
-  src: url('./fonts/Balqis.otf') format('eot');/*IE*/
-  src: url('./fonts/Balqis.ttf') format('truetype');/*non-IE*/
-}

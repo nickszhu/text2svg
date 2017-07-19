@@ -1,5 +1,4 @@
 var express = require('express');
-var fs= require('fs');
 var router = express.Router();
 var fabric = require('fabric').fabric;
 var Canvas = require('canvas');
@@ -18,50 +17,81 @@ router.post('/', function(req, res){
         i,
         offsetWidth = 0,
         fontFamily = req.body.fontFamily,
-        path = '/Users/ShihangZhu/text2svg/public/stylesheets/fonts/'+fontFamily+'.ttf';
-
-
-    fs.exists(path, function(exists) { 
-        console.log(exists ? "路径存在" : "路径不存在");  
-    });
-    
+        path = '/Users/ShihangZhu/text2svg/public/stylesheets/fonts/'+fontFamily+'.ttf',
+        hasShadow = (req.body.hasShadow == "true") ? 'rgba(0,0,0,0.3) 5px 5px 5px' : '',
+        isBold = (req.body.isBold == "true") ? 'bold' : 'normal' ,
+        color = req.body.color,
+        curvature = req.body.curvature,
+        fontSize = req.body.fontSize;
+  
     if(fontFamily !== "Songti SC"  ){
-        console.log('12345')
-        // Canvas.registerFont(path, {family: fontFamily});
-        console.log('font loaded successfully');
+        Canvas.registerFont(path, {family: fontFamily});
     }
 
-    var canvas = new Canvas(200, 200)
-    var ctx = canvas.getContext('2d')
+    if(curvature == 0){
+        
+        charGroup = new fabric.Text(text,{
+            fontSize: fontSize,
+            fontFamily: fontFamily,
+            shadow: hasShadow,
+            fontWeight: isBold,
+            fill: color
+        })
+    }
+    else{
+        for(i=0; i<numOfChar; i++){
+            chars[i] = new fabric.Text(text[i], {
+                fontSize: fontSize,
+                left: offsetWidth,
+                fontFamily: fontFamily,
+                shadow: hasShadow,
+                fontWeight: isBold,
+                fill: color
+            });
+            offsetWidth += chars[i].width;  
+        }    
+        
+        
+        var obj = new fabric.Group(chars,{left: 0,top: 20}),
+            delta = (180 / Math.PI),
+            newChars = new Array(obj.size()),
+            arcLength = offsetWidth,
+            minRadius = (arcLength / Math.PI)/2,
+            radius = this.value==0 ? null : minRadius/curvature + obj.item(0).getLineHeight(),
+            centerX = obj.oCoords.mb.x,
+            centerY = obj.oCoords.mb.y + radius,
+            center = new fabric.Point(centerX,centerY),
+            bottomCenter = obj.oCoords.mb,
+            offsetTheta =  - (arcLength/radius)/2,
+            i, newCharGroup, theta ;
 
-    // Write "Awesome!"
-    // ctx.font = '30px ' + fontFamily
-    ctx.rotate(0.1)
-    ctx.fillText('Awesome!', 50, 100)
+        function rotateByPoint(obj,center,radians){
+            var leftTop = new fabric.Point(obj.left, obj.top);
+            leftTop.subtractEquals(center);
+            var v = fabric.util.rotateVector(leftTop, radians);
+            var newLeftTop = new fabric.Point(v.x, v.y).addEquals(center);
+            obj.setPositionByOrigin(newLeftTop,'left','top');
+            obj.angle += radians * delta;
+        }
+ 
+        for (i=0; i<obj.size(); i++) {
+            newChars[i] = obj.item(i).clone();
+            newChars[i].angle = 0;
+            newChars[i].setPositionByOrigin(bottomCenter,'bottom','center');
+            theta = newChars[i].getWidth() / radius;
 
-    console.log(ctx, '77777777')
-
-    // var canvas = fabric.createCanvasForNode(500, 300);
-
-
-//     for(i=0; i<numOfChar; i++){
-//         chars[i] = new fabric.Text(text[i], {
-//             fontSize: 50,
-//             left: offsetWidth,
-//             fontFamily: fontFamily
-//         });
-//         offsetWidth += chars[i].width;
-//     }
-// console.log('1');
-//     charGroup = new fabric.Group(chars, {
-//         top: 50,
-//         left:50
-//     });
-// console.log('2', canvas.add);
-//     canvas.add(charGroup);
-// console.log('3');
-    res.send(ctx);
-console.log('4');
+            offsetTheta += theta/2;
+            rotateByPoint(newChars[i],center,offsetTheta);
+            offsetTheta += theta/2;
+        }
+ 
+        charGroup = new fabric.Group(newChars, {
+          left: 0,
+          top: 20
+        });     
+    }
+  
+    res.send(charGroup.toDataURL());
 });
 
 module.exports = router;

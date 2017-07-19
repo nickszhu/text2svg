@@ -1,19 +1,18 @@
 body {
-  padding: 50px;
+  padding: 10px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   text-align:center;
 }
 
 .main-ctn{
     margin:20px auto;
-    width: 500px;
+     width: 800px; 
 }
 
 .editBox{
-    height: 300px;
-    width : 500px;
+    height: 500px;
+    width : 800px;
     border: 1px solid grey;
-    margin-top: 20px;
 }
 
 
